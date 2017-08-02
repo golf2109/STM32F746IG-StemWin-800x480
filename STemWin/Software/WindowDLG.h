@@ -1,0 +1,11 @@
+#ifndef	WINDOWDLG_H
+#define	WINDOWDLG_H
+
+#include "GUI.h"
+#include "dialog.h"
+
+WM_HWIN CreateWindow(void);
+
+#endif
+
+

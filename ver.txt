@@ -1,0 +1,21 @@
+add BUTTON press testing 
+add WindowsDLG & FremewinDLG 
+change GUI_TOUCH_StoreState  to  GUI_TOUCH_StoreStateEx
+add GUI_TOUCH_Exec
+add DMA forI2C
+add touch file
+change SisTick to TIM14
+in GUIConf add extRAM for GUI
+in function picture_test() (add sprint() for file_name)
+add pictire_test_irq()
+remove DMA2D int from CubeMX
+remove HAL_DMA2D_MspInit     from LCDconf.c
+remove HAL_DMA2D_MspDeInit     from LCDconf.c
+remove HAL_LTDC_MspDeInit     from LCDconf.c
+stm32f7xx_it.c   extern   LTDC_HandleTypeDef hltdc_1     before    extern   LTDC_HandleTypeDef hltdc
+						  HAL_LTDC_IRQHandler(&hltdc_1);
+LCDconf.c     hltdc_1  before  hltdc	
+remove  hltdc_1
+change LCD clk in CubeMX
+change LTDC setting CubeMX
+delete LCD_LL_LayerInit  &  LCD_LL_Init  from LCDconf.c
