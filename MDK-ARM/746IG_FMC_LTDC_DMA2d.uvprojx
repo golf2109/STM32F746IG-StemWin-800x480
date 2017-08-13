@@ -81,7 +81,7 @@
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
+            <UserProg1Name>C:\keilkill.bat</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -133,11 +133,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4107</DriverSelection>
+            <DriverSelection>4100</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>STLink\ST-LINKIII-KEIL_SWO.dll</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -335,7 +335,7 @@
               <MiscControls>--C99</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F746xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../Drivers/STM32F7xx_HAL_Driver/Inc;../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F7xx/Include;../Drivers/CMSIS/Include;..\STemWin\Config;..\STemWin\Demo;..\STemWin\inc;..\STemWin\OS;..\BSP;../Middlewares/Third_Party/FatFs/src/drivers;../Middlewares/Third_Party/FatFs/src;..\STemWin\Software</IncludePath>
+              <IncludePath>../Inc;                              ../Drivers/STM32F7xx_HAL_Driver/Inc;                              ../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy;                              ../Drivers/CMSIS/Device/ST/STM32F7xx/Include;                              ../Drivers/CMSIS/Include;                              ..\STemWin\Config;                              ..\STemWin\Demo;                              ..\STemWin\inc;                              ..\STemWin\OS;                              ..\BSP;                              ../Middlewares/Third_Party/FatFs/src/drivers;                              ../Middlewares/Third_Party/FatFs/src;                              ..\STemWin\Software;                         ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1;                         ../Middlewares/Third_Party/FreeRTOS/Source/include;                         ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -353,7 +353,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <IncludePath>..\Inc</IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
@@ -405,19 +405,14 @@
               <FilePath>../Src/main.c</FilePath>
             </File>
             <File>
-              <FileName>gpio.c</FileName>
+              <FileName>freertos.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Src/gpio.c</FilePath>
+              <FilePath>../Src/freertos.c</FilePath>
             </File>
             <File>
               <FileName>crc.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/crc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Src/fmc.c</FilePath>
             </File>
             <File>
               <FileName>dma.c</FileName>
@@ -430,34 +425,24 @@
               <FilePath>../Src/dma2d.c</FilePath>
             </File>
             <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Src/gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>fmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Src/fmc.c</FilePath>
+            </File>
+            <File>
               <FileName>ltdc.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/ltdc.c</FilePath>
             </File>
             <File>
-              <FileName>fatfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Src/fatfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>sdmmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Src/sdmmc.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_driver_sd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Src/bsp_driver_sd.c</FilePath>
-            </File>
-            <File>
               <FileName>i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/i2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>ft5336.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\ft5336.c</FilePath>
             </File>
             <File>
               <FileName>tim.c</FileName>
@@ -470,6 +455,26 @@
               <FilePath>../Src/rng.c</FilePath>
             </File>
             <File>
+              <FileName>sdmmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Src/sdmmc.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Src/usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>fatfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Src/fatfs.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_driver_sd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Src/bsp_driver_sd.c</FilePath>
+            </File>
+            <File>
               <FileName>stm32f7xx_hal_timebase_TIM.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/stm32f7xx_hal_timebase_TIM.c</FilePath>
@@ -480,29 +485,14 @@
               <FilePath>..\Src\stm32746g_discovery_ts.c</FilePath>
             </File>
             <File>
-              <FileName>ft5336_disco.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\ft5336_disco.c</FilePath>
-            </File>
-            <File>
-              <FileName>usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Src/usart.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32746g_discovery.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\stm32746g_discovery.c</FilePath>
             </File>
             <File>
-              <FileName>FramewinDLG.c</FileName>
+              <FileName>ft5336.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\STemWin\Software\FramewinDLG.c</FilePath>
-            </File>
-            <File>
-              <FileName>FramewinDLG.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\STemWin\Software\FramewinDLG.h</FilePath>
+              <FilePath>..\Src\ft5336.c</FilePath>
             </File>
             <File>
               <FileName>WindowDLG.c</FileName>
@@ -510,9 +500,9 @@
               <FilePath>..\STemWin\Software\WindowDLG.c</FilePath>
             </File>
             <File>
-              <FileName>WindowDLG.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\STemWin\Software\WindowDLG.h</FilePath>
+              <FileName>Window_childDLG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STemWin\Software\Window_childDLG.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -690,9 +680,9 @@
               <FilePath>..\STemWin\Config\LCDConf.c</FilePath>
             </File>
             <File>
-              <FileName>GUI_X.c</FileName>
+              <FileName>GUI_X_OS.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\STemWin\OS\GUI_X.c</FilePath>
+              <FilePath>..\STemWin\OS\GUI_X_OS.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -700,144 +690,9 @@
           <GroupName>STemWin/Lib</GroupName>
           <Files>
             <File>
-              <FileName>STemWin532_CM7_Keil.lib</FileName>
+              <FileName>STemWin532_CM7_OS_Keil.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>..\STemWin\Lib\STemWin532_CM7_Keil.lib</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Demo</GroupName>
-          <Files>
-            <File>
-              <FileName>GUIDEMO.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO.h</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_AntialiasedText.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_AntialiasedText.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_Automotive.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_Automotive.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_BarGraph.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_BarGraph.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_Bitmap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_Bitmap.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_ColorBar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_ColorBar.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_Conf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_Conf.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_Cursor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_Cursor.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_Fading.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_Fading.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_Graph.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_Graph.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_IconView.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_IconView.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_ImageFlow.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_ImageFlow.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_Intro.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_Intro.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_Listview.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_Listview.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_RadialMenu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_RadialMenu.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_Resource.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_Resource.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_Skinning.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_Skinning.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_Speed.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_Speed.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_Speedometer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_Speedometer.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_Start.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_Start.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_TransparentDialog.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_TransparentDialog.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_Treeview.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_Treeview.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_VScreen.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_VScreen.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_WashingMachine.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_WashingMachine.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDEMO_ZoomAndRotate.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STemWin\Demo\GUIDEMO_ZoomAndRotate.c</FilePath>
+              <FilePath>..\STemWin\Lib\STemWin532_CM7_OS_Keil.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -868,6 +723,56 @@
               <FileName>ff_gen_drv.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Middlewares/Third_Party/FatFs/src/ff_gen_drv.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Middlewares/FreeRTOS</GroupName>
+          <Files>
+            <File>
+              <FileName>croutine.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/croutine.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmsis_os.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c</FilePath>
+            </File>
+            <File>
+              <FileName>port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1/port.c</FilePath>
+            </File>
+            <File>
+              <FileName>list.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/list.c</FilePath>
+            </File>
+            <File>
+              <FileName>tasks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/tasks.c</FilePath>
+            </File>
+            <File>
+              <FileName>queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/queue.c</FilePath>
+            </File>
+            <File>
+              <FileName>timers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/timers.c</FilePath>
+            </File>
+            <File>
+              <FileName>event_groups.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/event_groups.c</FilePath>
+            </File>
+            <File>
+              <FileName>heap_4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</FilePath>
             </File>
           </Files>
         </Group>

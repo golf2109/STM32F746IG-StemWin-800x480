@@ -19,6 +19,14 @@
 */
 
 // USER START (Optionally insert additional includes)
+#include "Window_childDLG.h"
+
+
+extern	void readFontfromXBFSD300(void);
+extern	void readFontfromXBFSD42(void);
+
+extern	GUI_FONT XBFFont;
+extern	GUI_FONT XBFFont42;
 // USER END
 
 #include "DIALOG.h"
@@ -33,9 +41,29 @@
 #define ID_BUTTON_0 (GUI_ID_USER + 0x01)
 #define ID_BUTTON_1 (GUI_ID_USER + 0x02)
 #define ID_TEXT_0 (GUI_ID_USER + 0x03)
+#define ID_TEXT_1 (GUI_ID_USER + 0x04)
+#define ID_BUTTON_2 (GUI_ID_USER + 0x05)
+#define ID_BUTTON_3 (GUI_ID_USER + 0x06)
+#define ID_BUTTON_4 (GUI_ID_USER + 0x07)
+#define ID_BUTTON_5 (GUI_ID_USER + 0x08)
+#define ID_TEXT_2 (GUI_ID_USER + 0x09)
+#define ID_TEXT_3 (GUI_ID_USER + 0x0A)
+#define ID_TEXT_4 (GUI_ID_USER + 0x0B)
+#define ID_TEXT_5 (GUI_ID_USER + 0x0C)
+#define ID_TEXT_6 (GUI_ID_USER + 0x0D)
+#define ID_TEXT_7 (GUI_ID_USER + 0x0E)
+#define ID_TEXT_8 (GUI_ID_USER + 0x0F)
+#define ID_TEXT_9 (GUI_ID_USER + 0x10)
+#define ID_TEXT_10 (GUI_ID_USER + 0x11)
+#define ID_TEXT_11 (GUI_ID_USER + 0x12)
+#define ID_TEXT_12 (GUI_ID_USER + 0x13)
+#define ID_TEXT_13 (GUI_ID_USER + 0x14)
 
 
 // USER START (Optionally insert additional defines)
+//extern GUI_CONST_STORAGE GUI_FONT GUI_FontRobotoLight115;
+//extern GUI_CONST_STORAGE GUI_FONT GUI_FontRobotoLight400;
+extern	WM_HWIN hWin_child;
 // USER END
 
 /*********************************************************************
@@ -54,9 +82,26 @@
 */
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
   { WINDOW_CreateIndirect, "Window", ID_WINDOW_0, 0, 0, 800, 480, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "Button", ID_BUTTON_0, 0, 0, 229, 99, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "Button", ID_BUTTON_1, 581, 380, 221, 102, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "Text", ID_TEXT_0, 261, 166, 228, 46, 0, 0x64, 0 },
+  { BUTTON_CreateIndirect, "Button", ID_BUTTON_0, 30, 30, 140, 63, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "Button", ID_BUTTON_1, 625, 30, 140, 63, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "Text", ID_TEXT_0, 174, 72, 444, 302, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Time", ID_TEXT_1, 240, 22, 365, 76, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "10 %", ID_BUTTON_2, 625, 308, 140, 63, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "AUTO", ID_BUTTON_3, 625, 385, 140, 63, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "Button", ID_BUTTON_4, 249, 406, 80, 33, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "Button", ID_BUTTON_5, 462, 407, 80, 33, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "Lifetime", ID_TEXT_2, 188, 36, 67, 52, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "Hour", ID_TEXT_3, 306, 4, 63, 21, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "Min", ID_TEXT_4, 412, 1, 70, 23, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "Intencity", ID_TEXT_5, 364, 402, 80, 45, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "LED", ID_TEXT_6, 46, 128, 80, 43, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "ON", ID_TEXT_7, 45, 179, 80, 38, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "LED t", ID_TEXT_8, 54, 300, 80, 47, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "OK", ID_TEXT_9, 51, 377, 80, 66, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "NET", ID_TEXT_10, 655, 141, 80, 34, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "ON", ID_TEXT_11, 657, 203, 80, 46, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "-", ID_TEXT_12, 187, 412, 37, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "+", ID_TEXT_13, 566, 411, 31, 28, 0, 0x0, 0 },
   // USER START (Optionally insert additional widgets)
   // USER END
 };
@@ -69,6 +114,123 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 */
 
 // USER START (Optionally insert additional static code)
+
+//=============================================================
+
+//////static BUTTON_SKINFLEX_PROPS _aProps[] = {
+//////// BUTTON_SKINFLEX_PI_PRESSED
+//////  {
+//////    {GUI_RED, GUI_RED, GUI_DARKRED},
+//////    {GUI_LIGHTRED, GUI_RED },
+//////    {GUI_RED, GUI_DARKRED },
+//////     3
+//////  },
+//////// BUTTON_SKINFLEX_PI_FOCUSSED
+//////  {
+//////    {GUI_DARKRED, GUI_RED, GUI_DARKGRAY},
+//////    {GUI_LIGHTGRAY, GUI_GRAY },
+//////    {GUI_GRAY, GUI_DARKGRAY },
+//////     3
+//////  },
+//////// BUTTON_SKINFLEX_PI_ENABLED
+//////  {
+//////    {GUI_DARKRED, GUI_GRAY, GUI_DARKGRAY},
+//////    {GUI_LIGHTGRAY, GUI_GRAY },
+//////    {GUI_GRAY, GUI_DARKGRAY },
+//////     3
+//////  },
+//////// BUTTON_SKINFLEX_PI_DISABLED
+//////  {
+//////    {0, 0, 0},
+//////    {0, 0 },
+//////    {0, 0 },
+//////     3
+//////  },
+//////};
+
+/*********************************************************************
+*
+*       _CustomSkin
+*/
+////////////static int _CustomSkin(const WIDGET_ITEM_DRAW_INFO * pDrawItemInfo) {
+////////////  int       Id;
+////////////  GUI_POINT aPoints[4];
+////////////  GUI_COLOR Color;
+//////////////  BUTTON_SKINFLEX_PROPS aPropsOld[4];
+//////////////  int i;
+
+////////////  switch (pDrawItemInfo->Cmd) {
+////////////  case WIDGET_ITEM_DRAW_BACKGROUND:
+////////////    Id = WM_GetId(pDrawItemInfo->hWin);
+////////////    switch (Id) {
+////////////    case ID_BUTTON_0:
+////////////      //
+////////////      // Draw an elliptic button
+////////////      //
+////////////      if (BUTTON_IsPressed(pDrawItemInfo->hWin)) {
+////////////        Color = GUI_YELLOW;
+////////////      } else {
+////////////        Color = GUI_RED;
+////////////      }
+////////////      GUI_SetColor(Color);
+////////////      //GUI_FillEllipse(pDrawItemInfo->x1 / 2, pDrawItemInfo->y1 / 2, pDrawItemInfo->x1 / 2 - 1, pDrawItemInfo->y1 / 2 - 1);
+////////////      GUI_FillCircle(pDrawItemInfo->x1 / 2, pDrawItemInfo->y1 / 2, 50);			
+////////////      break;
+////////////    case ID_BUTTON_1:
+////////////      //
+////////////      // Draw a triangle button
+////////////      //
+//////////////////      aPoints[0].x = pDrawItemInfo->x1 / 2;
+//////////////////      aPoints[0].y = pDrawItemInfo->y0;
+//////////////////      aPoints[1].x = pDrawItemInfo->x1;
+//////////////////      aPoints[1].y = pDrawItemInfo->y1;
+//////////////////      aPoints[2].x = pDrawItemInfo->x0;
+//////////////////      aPoints[2].y = pDrawItemInfo->y1;
+////////////      if (BUTTON_IsPressed(pDrawItemInfo->hWin)) {
+////////////        Color = GUI_GREEN;
+////////////      } else {
+////////////        Color = GUI_CYAN;
+////////////      }
+////////////      GUI_SetColor(Color);
+//////////////////      GUI_FillPolygon(aPoints, GUI_COUNTOF(aPoints), pDrawItemInfo->x0, pDrawItemInfo->y0);
+//////////////      GUI_FillCircle(pDrawItemInfo->x1 / 2, pDrawItemInfo->y1 / 2, 40);					
+
+
+////////////      aPoints[0].x = pDrawItemInfo->x0;
+////////////      aPoints[0].y = pDrawItemInfo->y0;
+////////////      aPoints[1].x = pDrawItemInfo->x1;
+////////////      aPoints[1].y = pDrawItemInfo->y1;
+////////////      aPoints[2].x = pDrawItemInfo->x0;
+////////////      aPoints[2].y = pDrawItemInfo->y1;
+//////////////      aPoints[3].x = pDrawItemInfo->x0;
+//////////////      aPoints[4].y = pDrawItemInfo->y1;				
+//////////////			GUI_FillRect(aPoints[0].x, aPoints[0].y, aPoints[1].x, aPoints[1].y);			
+////////////			GUI_DrawRect(aPoints[0].x, aPoints[0].y, aPoints[1].x, aPoints[1].y);				
+////////////			
+////////////      break;
+////////////////////    case ID_BUTTON_2:
+////////////////////      //
+////////////////////      // Draw a standard button with different colors
+////////////////////      //
+////////////////////      for (i = 0; i < 4; i++) {
+////////////////////        BUTTON_GetSkinFlexProps(&aPropsOld[i], i);  // Get default properties
+////////////////////        BUTTON_SetSkinFlexProps(&_aProps[i], i);    // Set new properties
+////////////////////      }
+////////////////////      BUTTON_DrawSkinFlex(pDrawItemInfo);           // Draw button with new properties
+////////////////////      for (i = 0; i < 4; i++) {
+////////////////////        BUTTON_SetSkinFlexProps(&aPropsOld[i], i);  // Restore old properties to avoid other buttons will be drawn with this properties
+////////////////////      }
+////////////////////      break;
+////////////////////    case ID_BUTTON_3:
+////////////////////      BUTTON_DrawSkinFlex(pDrawItemInfo);
+////////////////////      break;
+////////////    }
+////////////    return 0;
+////////////  default:
+////////////    return BUTTON_DrawSkinFlex(pDrawItemInfo);
+////////////  }
+////////////}
+//========================================================================
 // USER END
 
 /*********************************************************************
@@ -85,13 +247,136 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
   switch (pMsg->MsgId) {
   case WM_INIT_DIALOG:
     //
+    // Initialization of 'Window'
+    //
+    hItem = pMsg->hWin;
+    WINDOW_SetBkColor(hItem, 0x00361400);
+    //
+    // Initialization of 'Button'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_0);
+    BUTTON_SetText(hItem, "Stop");
+    BUTTON_SetFont(hItem, GUI_FONT_32_1);
+    //
+    // Initialization of 'Button'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_1);
+    BUTTON_SetText(hItem, "Menu");
+    BUTTON_SetFont(hItem, GUI_FONT_32_1);
+    //
     // Initialization of 'Text'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
     TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     TEXT_SetFont(hItem, GUI_FONT_32B_1);
     TEXT_SetText(hItem, "Text");
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    //
+    // Initialization of 'Time'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_1);
+    TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetFont(hItem, GUI_FONT_13_1);
+    //
+    // Initialization of 'Lifetime'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_2);
+    TEXT_SetFont(hItem, GUI_FONT_13_1);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetTextAlign(hItem, GUI_TA_LEFT | GUI_TA_VCENTER);
+    //
+    // Initialization of 'Hour'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_3);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetTextAlign(hItem, GUI_TA_LEFT | GUI_TA_VCENTER);
+    //
+    // Initialization of 'Min'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_4);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetTextAlign(hItem, GUI_TA_LEFT | GUI_TA_VCENTER);
+    //
+    // Initialization of 'Intencity'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_5);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    //
+    // Initialization of 'LED'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_6);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    //
+    // Initialization of 'ON'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_7);
+    TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    //
+    // Initialization of 'LED t'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_8);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    //
+    // Initialization of 'OK'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_9);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    //
+    // Initialization of 'NET'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_10);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    //
+    // Initialization of 'ON'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_11);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    //
+    // Initialization of '-'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_12);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    //
+    // Initialization of '+'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_13);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     // USER START (Optionally insert additional code for further widget initialization)
+//==========================================================================================		
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_1);		
+//    TEXT_SetFont(hItem, &GUI_FontRobotoLight115);		
+		readFontfromXBFSD42();	
+		TEXT_SetFont(hItem, &XBFFont42);	
+
+
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
+		readFontfromXBFSD300();	
+		TEXT_SetFont(hItem, &XBFFont);		
+		
+		
+//===========================================================================================
+//////    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_0);		
+//////		BUTTON_SetTextColor(hItem,0, GUI_WHITE);
+//////		BUTTON_SetTextColor(hItem,1, GUI_WHITE);
+//////		BUTTON_SetTextColor(hItem,2, GUI_WHITE);		
+//////    BUTTON_SetSkin(hItem, _CustomSkin);
+//////		
+//////    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_1);
+//////		BUTTON_SetTextColor(hItem,0, GUI_WHITE);
+//////		BUTTON_SetTextColor(hItem,1, GUI_WHITE);
+//////		BUTTON_SetTextColor(hItem,2, GUI_WHITE);	
+//////    BUTTON_SetSkin(hItem, _CustomSkin);		
+//===========================================================================================		
     // USER END
     break;
   case WM_NOTIFY_PARENT:
@@ -123,7 +408,66 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       case WM_NOTIFICATION_RELEASED:
         // USER START (Optionally insert code for reacting on notification message)
 					hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
-          TEXT_SetText(hItem, "1234");				
+          TEXT_SetText(hItem, "1234");		
+
+	hWin_child = CreateWindow_child();
+			
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_BUTTON_2: // Notifications sent by '10 %'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_BUTTON_3: // Notifications sent by 'AUTO'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_BUTTON_4: // Notifications sent by 'Button'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_BUTTON_5: // Notifications sent by 'Button'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)

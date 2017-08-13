@@ -241,7 +241,7 @@ typedef enum
 /* User can use this section to tailor I2Cx/I2Cx instance used and associated 
    resources */
 /* Definition for AUDIO and LCD I2Cx resources */
-#define DISCOVERY_AUDIO_I2Cx                             I2C3
+#define DISCOVERY_AUDIO_I2Cx                             I2C1
 #define DISCOVERY_AUDIO_I2Cx_CLK_ENABLE()                __HAL_RCC_I2C3_CLK_ENABLE()
 #define DISCOVERY_AUDIO_DMAx_CLK_ENABLE()                __HAL_RCC_DMA1_CLK_ENABLE()
 #define DISCOVERY_AUDIO_I2Cx_SCL_SDA_GPIO_CLK_ENABLE()   __HAL_RCC_GPIOH_CLK_ENABLE()
@@ -250,14 +250,14 @@ typedef enum
 #define DISCOVERY_AUDIO_I2Cx_RELEASE_RESET()             __HAL_RCC_I2C3_RELEASE_RESET()
 
 /* Definition for I2Cx Pins */
-#define DISCOVERY_AUDIO_I2Cx_SCL_PIN                     GPIO_PIN_7
-#define DISCOVERY_AUDIO_I2Cx_SCL_SDA_GPIO_PORT           GPIOH
-#define DISCOVERY_AUDIO_I2Cx_SCL_SDA_AF                  GPIO_AF4_I2C3
-#define DISCOVERY_AUDIO_I2Cx_SDA_PIN                     GPIO_PIN_8
+#define DISCOVERY_AUDIO_I2Cx_SCL_PIN                     GPIO_PIN_6
+#define DISCOVERY_AUDIO_I2Cx_SCL_SDA_GPIO_PORT           GPIOB
+#define DISCOVERY_AUDIO_I2Cx_SCL_SDA_AF                  GPIO_AF4_I2C1
+#define DISCOVERY_AUDIO_I2Cx_SDA_PIN                     GPIO_PIN_7
 
 /* I2C interrupt requests */
-#define DISCOVERY_AUDIO_I2Cx_EV_IRQn                     I2C3_EV_IRQn
-#define DISCOVERY_AUDIO_I2Cx_ER_IRQn                     I2C3_ER_IRQn
+#define DISCOVERY_AUDIO_I2Cx_EV_IRQn                     I2C1_EV_IRQn
+#define DISCOVERY_AUDIO_I2Cx_ER_IRQn                     I2C1_ER_IRQn
 
 /* Definition for external, camera and Arduino connector I2Cx resources */
 #define DISCOVERY_EXT_I2Cx                               I2C1

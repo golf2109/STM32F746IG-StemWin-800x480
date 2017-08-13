@@ -138,7 +138,7 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* i2cHandle)
     __HAL_LINKDMA(i2cHandle,hdmarx,hdma_i2c1_rx);
 
     /* I2C1 interrupt Init */
-    HAL_NVIC_SetPriority(I2C1_EV_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(I2C1_EV_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(I2C1_EV_IRQn);
   /* USER CODE BEGIN I2C1_MspInit 1 */
 

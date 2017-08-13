@@ -87,7 +87,7 @@
 /** @defgroup STM32746G_DISCOVERY_LOW_LEVEL_Private_Variables STM32746G_DISCOVERY_LOW_LEVEL Private Variables
   * @{
   */
-
+extern	I2C_HandleTypeDef hi2c1;
 const uint32_t GPIO_PIN[LEDn] = {LED1_PIN};
 
 GPIO_TypeDef* BUTTON_PORT[BUTTONn] = {WAKEUP_BUTTON_GPIO_PORT,
@@ -863,7 +863,8 @@ uint8_t TS_IO_Read(uint8_t Addr, uint8_t Reg)
 {
   uint8_t read_value = 0;
 
-  I2Cx_ReadMultiple(&hI2cAudioHandler, Addr, Reg, I2C_MEMADD_SIZE_8BIT, (uint8_t*)&read_value, 1);
+//  I2Cx_ReadMultiple(&hI2cAudioHandler, Addr, Reg, I2C_MEMADD_SIZE_8BIT, (uint8_t*)&read_value, 1);
+  I2Cx_ReadMultiple(&hi2c1, Addr, Reg, I2C_MEMADD_SIZE_8BIT, (uint8_t*)&read_value, 1);	
 
   return read_value;
 }

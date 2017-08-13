@@ -51,7 +51,7 @@
   /* Includes ------------------------------------------------------------------*/
 
 /* USER CODE BEGIN Includes */
-
+#include "stm32746g_discovery_ts.h"
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/

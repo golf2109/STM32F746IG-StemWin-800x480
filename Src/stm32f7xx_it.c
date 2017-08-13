@@ -34,13 +34,15 @@
 #include "stm32f7xx_hal.h"
 #include "stm32f7xx.h"
 #include "stm32f7xx_it.h"
+#include "cmsis_os.h"
 
 /* USER CODE BEGIN 0 */
 #include "GUI.h"
-extern volatile GUI_TIMER_TIME OS_TimeMS;
-
+//extern volatile GUI_TIMER_TIME OS_TimeMS;
+uint8_t read_value = 0;
+uint16_t read_value_xy[2];
 extern uint8_t MasterTX[0x10];
-extern uint16_t touch_adr;
+extern	HAL_StatusTypeDef touch_adr;
 extern uint8_t touch_receive[0xff];
 extern volatile uint8_t touch_enable;
 /* USER CODE END 0 */
@@ -66,9 +68,9 @@ void SysTick_Handler(void)
   /* USER CODE BEGIN SysTick_IRQn 0 */
 
   /* USER CODE END SysTick_IRQn 0 */
-  HAL_SYSTICK_IRQHandler();
+  osSystickHandler();
   /* USER CODE BEGIN SysTick_IRQn 1 */
-	OS_TimeMS++;
+//	OS_TimeMS++;
   /* USER CODE END SysTick_IRQn 1 */
 }
 
@@ -85,14 +87,93 @@ void SysTick_Handler(void)
 void EXTI4_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI4_IRQn 0 */
-
+  if(__HAL_GPIO_EXTI_GET_IT(GPIO_PIN_4) != RESET)
+  {
+    __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_4);
+    HAL_GPIO_EXTI_Callback(GPIO_PIN_4);
+  }
   /* USER CODE END EXTI4_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
   /* USER CODE BEGIN EXTI4_IRQn 1 */
+
+//////  * @brief  Read an amount of data in blocking mode from a specific memory address
+//////  * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
+//////  *                the configuration information for the specified I2C.
+//////  * @param  DevAddress Target device address: The device 7 bits address value
+//////  *         in datasheet must be shift at right before call interface
+//////  * @param  MemAddress Internal memory address
+//////  * @param  MemAddSize Size of internal memory address
+//////  * @param  pData Pointer to data buffer
+//////  * @param  Size Amount of data to be sent
+//////  * @param  Timeout Timeout duration
+//////  * @retval HAL status
+//////  
+//////HAL_StatusTypeDef HAL_I2C_Mem_Read(I2C_HandleTypeDef *hi2c, 
+//////																				 uint16_t DevAddress, 
+//////																				 uint16_t MemAddress, 
+//////	                                       uint16_t MemAddSize, 
+//////	                                       uint8_t *pData, 
+//////																				 uint16_t Size, 
+//////																				 uint32_t Timeout)
+
+
+
+///////**
+//////  * @brief  Reads multiple data.
+//////  * @param  i2c_handler : I2C handler
+//////  * @param  Addr: I2C address
+//////  * @param  Reg: Reg address 
+//////  * @param  MemAddress: Memory address 
+//////  * @param  Buffer: Pointer to data buffer
+//////  * @param  Length: Length of the data
+//////  * @retval Number of read data
+//////  */
+//////static HAL_StatusTypeDef I2Cx_ReadMultiple(I2C_HandleTypeDef *i2c_handler,
+//////                                           uint8_t Addr,
+//////                                           uint16_t Reg,
+//////                                           uint16_t MemAddress,
+//////                                           uint8_t *Buffer,
+//////                                           uint16_t Length)
+	
+	
 MasterTX[0]=0x00;
 touch_adr = HAL_I2C_Master_Transmit(&hi2c1, 0x70, MasterTX, 0x01, 1);   
 //touch_adr = HAL_I2C_Master_Receive(&hi2c1, 0x70, touch_receive, 0x20, 1);   
 touch_adr = HAL_I2C_Master_Receive_DMA(&hi2c1, 0x70, touch_receive, 0x20);
+//touch_adr = HAL_I2C_Mem_Read(&hi2c1, 0x70,0,3, touch_receive, 0x20, 100);	
+
+
+/////**
+////  * @brief  Reads a single data.
+////  * @param  Addr: I2C address
+////  * @param  Reg: Reg address
+////  * @retval Data to be read
+////  */
+////uint8_t TS_IO_Read(uint8_t Addr, uint8_t Reg)
+////{
+////  uint8_t read_value = 0;
+
+//////  I2Cx_ReadMultiple(&hI2cAudioHandler, Addr, Reg, I2C_MEMADD_SIZE_8BIT, (uint8_t*)&read_value, 1);
+////  I2Cx_ReadMultiple(&hi2c1, Addr, Reg, I2C_MEMADD_SIZE_8BIT, (uint8_t*)&read_value, 1);	
+
+////  return read_value;
+////}
+
+//read_value =  TS_IO_Read(0x70,0x02);
+
+
+/////**
+////  * @brief  Get the touch screen X and Y positions values
+////  *         Manage multi touch thanks to touch Index global
+////  *         variable 'ft5336_handle.currActiveTouchIdx'.
+////  * @param  DeviceAddr: Device address on communication Bus.
+////  * @param  X: Pointer to X position value
+////  * @param  Y: Pointer to Y position value
+////  * @retval None.
+////  */
+////void ft5336_TS_GetXY(uint16_t DeviceAddr, uint16_t *X, uint16_t *Y)
+////ft5336_TS_GetXY(0x70, read_value_xy, read_value_xy+1);
+
 touch_enable = 1;  
   /* USER CODE END EXTI4_IRQn 1 */
 }
@@ -109,24 +190,6 @@ void DMA1_Stream0_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Stream0_IRQn 1 */
 
   /* USER CODE END DMA1_Stream0_IRQn 1 */
-}
-
-/**
-* @brief This function handles EXTI line[9:5] interrupts.
-*/
-void EXTI9_5_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
-
-  /* USER CODE END EXTI9_5_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_7);
-  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
-MasterTX[0]=0x00;
-//touch_adr = HAL_I2C_Master_Transmit(&hi2c1, 0x70, MasterTX, 0x01, 1);   
-////touch_adr = HAL_I2C_Master_Receive(&hi2c1, 0x70, touch_receive, 0x20, 1);   
-//touch_adr = HAL_I2C_Master_Receive_DMA(&hi2c1, 0x70, touch_receive, 0x20);
-//touch_enable = 1;  
-  /* USER CODE END EXTI9_5_IRQn 1 */
 }
 
 /**

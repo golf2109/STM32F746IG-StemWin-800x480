@@ -73,6 +73,13 @@
 
 #include "stm32f7xx_hal.h"
 #define TS_I2C_ADDRESS                   ((uint16_t)0x70)
+
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#define TS_INT_PIN                           GPIO_PIN_4
+#define TS_INT_GPIO_PORT                     GPIOB
+#define TS_INT_EXTI_IRQn                     EXTI4_IRQn  //EXTI15_10_IRQn
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 /** @addtogroup BSP
   * @{
   */
@@ -148,22 +155,23 @@ uint8_t BSP_TS_Init(uint16_t ts_SizeX, uint16_t ts_SizeY)
   tsXBoundary = ts_SizeX;
   tsYBoundary = ts_SizeY;
   
+	
   /* Read ID and verify if the touch screen driver is ready */
   ft5336_ts_drv.Init(TS_I2C_ADDRESS);
-  if(ft5336_ts_drv.ReadID(TS_I2C_ADDRESS) == FT5336_ID_VALUE)
-  { 
+////  if(ft5336_ts_drv.ReadID(TS_I2C_ADDRESS) == FT5336_ID_VALUE)
+////  { 
     /* Initialize the TS driver structure */
     tsDriver = &ft5336_ts_drv;
     I2cAddress = TS_I2C_ADDRESS;
-    tsOrientation = TS_SWAP_XY;
-
+//    tsOrientation = TS_SWAP_XY;
+    tsOrientation =  TS_SWAP_NONE;
     /* Initialize the TS driver */
     tsDriver->Start(I2cAddress);
-  }
-  else
-  {
-    status = TS_DEVICE_NOT_FOUND;
-  }
+////  }
+////  else
+////  {
+//////    status = TS_DEVICE_NOT_FOUND;
+////  }
 
   return status;
 }

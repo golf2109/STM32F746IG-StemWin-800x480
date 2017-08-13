@@ -48,6 +48,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f7xx_hal.h"
+#include "cmsis_os.h"
 #include "crc.h"
 #include "dma.h"
 #include "dma2d.h"
@@ -65,11 +66,16 @@
 #include "GUI.h"
 #include "GUIDEMO.h"
 #include "stdint.h"
-#include "ft5336.h"
+//#include "ft5336.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "stm32746g_discovery_ts.h"
 //#include "stm32746g_sdram.h"
 
 #include "FramewinDLG.h"
 #include "WindowDLG.h"
+#include "Window_childDLG.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -91,8 +97,13 @@
 #define SDRAM_MODEREG_WRITEBURST_MODE_SINGLE     ((uint16_t)0x0200) 
  FMC_SDRAM_CommandTypeDef Command;
  
+struct __FILE { int handle; /* Add whatever is needed */ };   //for SWO
+ 
+ 
 FATFS SDFatFs __attribute__((aligned(4))); /* File system object for SD card logical drive */
 FIL MyFile __attribute__((aligned(4))); /* File object */
+FIL MyFile1 __attribute__((aligned(4))); /* File object */
+FIL MyFile2 __attribute__((aligned(4))); /* File object */
 extern char SD_Path[4]; /* SD logical drive path */
 FRESULT fresult;
 uint8_t _acBuffer[4096] __attribute__((aligned(4)));
@@ -103,7 +114,7 @@ uint16_t i,j;
 uint8_t* bmp1;
 uint8_t sect[4096];
 
-static TS_StateTypeDef TS_State;
+TS_StateTypeDef TS_State;
 uint16_t x=0, y=0;
 uint32_t tscnt[5]={0};
 uint16_t xstart[5]={0}, ystart[5]={0};
@@ -122,26 +133,44 @@ uint8_t uart_RX[0x20];
 uint8_t uart_TX[0x60];
 uint8_t str[200];
 uint8_t touch_receive[0xff];
-uint16_t touch_adr;
+HAL_StatusTypeDef touch_adr;
 uint16_t x_pos[5]={0},y_pos[5]={0};
 uint16_t event_flag[5], touch_id[5];
 uint16_t x_circle_position[5], y_circle_position[5];
 uint8_t  t0,t1,t2,t3;
 uint8_t device_mode, gesture_id, number_of_tuchpoint ;
-uint8_t test_read[0x10];
+uint8_t test_read[0x20];
+uint8_t test_read_00[0x20];
+
 //================
 GUI_PID_STATE touch_state;
-
+HAL_StatusTypeDef  touch_send;
+extern uint8_t SelLayer;
 //FRAMEWIN_Handle hWin;
 WM_HWIN hWin;
+WM_HWIN hWin_child;
+BUTTON_SKINFLEX_PROPS my_BUTTON_SKINFLEX_PROPS;
+
+GUI_FONT XBFFont;
+GUI_FONT XBFFont42;
+GUI_XBF_DATA XBF_Data;
+GUI_XBF_DATA XBF_Data42;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MPU_Config(void);
+void MX_FREERTOS_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
+int fputc(int ch, FILE *f) {			//for SWO
+ITM_SendChar(ch);//send method for SWV
+//uint32_t i=0;
+//for(i=0;i<0xFFFF;i++);//waiting method, lower value will stop the SWV	
+return(ch);
+}
+
 void  SDRAM_Setting(void){	
   __IO uint32_t tmpmrd = 0;
   
@@ -220,6 +249,78 @@ void picture_test(void){
 }
 
 
+static int _cbGetData300(U32 Off, U16 NumBytes, void * pVoid, void * pBuffer) {
+uint32_t  br;
+MyFile1 = *(FIL *)pVoid;
+fresult = f_lseek(&MyFile1,Off);
+if (fresult != FR_OK) {
+return 1; /* Error */
+}
+fresult=f_read(&MyFile1,pBuffer,NumBytes,&br);
+if (fresult != FR_OK) {
+return 1; /* Error */
+}
+if (br != NumBytes) {
+return 1; /* Error */
+}
+return 0; /* Ok */
+}
+
+
+void readFontfromXBFSD300(void){
+GUI_FONTINFO fontinfo;
+GUI_CHARINFO_EXT charinfo;
+fresult = f_open(&MyFile1, "R300.xbf", FA_OPEN_EXISTING | FA_READ);
+GUI_XBF_CreateFont(&XBFFont, /* Pointer to GUI_FONT structure in RAM */
+&XBF_Data, /* Pointer to GUI_XBF_DATA structure in RAM */
+GUI_XBF_TYPE_PROP, /* Font type to be created */
+_cbGetData300, /* Pointer to callback function */
+&MyFile1); /* Pointer to be passed to GetData function */
+GUI_XBF__GetFontInfo(&XBFFont,&fontinfo);
+GUI_XBF__GetCharInfo(0x4E2D,&charinfo);
+
+//GUI_SetFont(&XBFFont);		
+//////GUI_DispStringAt("12",250,150);		
+//fresult = f_close(&MyFile1);
+}
+
+
+
+static int _cbGetData42(U32 Off, U16 NumBytes, void * pVoid, void * pBuffer) {
+uint32_t  br;
+MyFile2 = *(FIL *)pVoid;
+fresult = f_lseek(&MyFile2,Off);
+if (fresult != FR_OK) {
+return 1; /* Error */
+}
+fresult=f_read(&MyFile2,pBuffer,NumBytes,&br);
+if (fresult != FR_OK) {
+return 1; /* Error */
+}
+if (br != NumBytes) {
+return 1; /* Error */
+}
+return 0; /* Ok */
+}
+
+
+void readFontfromXBFSD42(void){
+GUI_FONTINFO fontinfo;
+GUI_CHARINFO_EXT charinfo;
+fresult = f_open(&MyFile2, "R42.xbf", FA_OPEN_EXISTING | FA_READ);
+GUI_XBF_CreateFont(&XBFFont42, /* Pointer to GUI_FONT structure in RAM */
+&XBF_Data42, /* Pointer to GUI_XBF_DATA structure in RAM */
+GUI_XBF_TYPE_PROP, /* Font type to be created */
+_cbGetData42, /* Pointer to callback function */
+&MyFile2); /* Pointer to be passed to GetData function */
+GUI_XBF__GetFontInfo(&XBFFont42,&fontinfo);
+GUI_XBF__GetCharInfo(0x4E2D,&charinfo);
+
+//GUI_SetFont(&XBFFont42);		
+//////GUI_DispStringAt("12",250,150);		
+//fresult = f_close(&MyFile2);
+}
+
 void picture_test_irq(void){
 uint32_t prim;	
 	
@@ -264,11 +365,53 @@ uint8_t CheckForUserInput(void){
  }
  return 0;
 }
+void k_TouchUpdate(void){
+  static GUI_PID_STATE TS_State = {0, 0, 0, 0};
+  __IO TS_StateTypeDef  ts;
+  uint16_t xDiff, yDiff;  
+
+  BSP_TS_GetState((TS_StateTypeDef *)&ts);
+
+  if((ts.touchX[0] >= LCD_GetXSize()) ||(ts.touchY[0] >= LCD_GetYSize()) ) 
+  {
+    ts.touchX[0] = 0;
+    ts.touchY[0] = 0;
+    ts.touchDetected =0;
+  }
+
+  xDiff = (TS_State.x > ts.touchX[0]) ? (TS_State.x - ts.touchX[0]) : (ts.touchX[0] - TS_State.x);
+  yDiff = (TS_State.y > ts.touchY[0]) ? (TS_State.y - ts.touchY[0]) : (ts.touchY[0] - TS_State.y);
+  
+  
+  if((TS_State.Pressed != ts.touchDetected ) ||
+     (xDiff > 30 )||
+      (yDiff > 30))
+  {
+    TS_State.Pressed = ts.touchDetected;
+//    TS_State.Layer = SelLayer;
+//    TS_State.Layer = 1;		
+    if(ts.touchDetected) 
+    {
+      TS_State.x = ts.touchX[0];
+      TS_State.y = ts.touchY[0];
+      GUI_TOUCH_StoreStateEx(&TS_State);
+    }
+    else
+    {
+      GUI_TOUCH_StoreStateEx(&TS_State);
+      TS_State.x = 0;
+      TS_State.y = 0;
+    }
+  }
+}
+
+
+
 
 void touch_test(void){
 	while (CheckForUserInput()==0)
 	{
-		TS_GetState(&TS_State);
+		BSP_TS_GetState(&TS_State);
 		if(TS_State.touchDetected)
 		{
 			x = TS_State.touchX[0];
@@ -884,7 +1027,7 @@ pState->Pressed = 0;
 return 0;
 }
 
-void GUI_TOUCH_Exec (void) {
+void GUI_TOUCH_Exec_my_old(void) {
   //TOUCH_STATE touch_state;
 //	GUI_PID_STATE touch_state;
   static U8   PressedOld = 0;
@@ -943,6 +1086,15 @@ void GUI_TOUCH_Exec (void) {
     }
   }
 }
+
+void read_touch_int(void){
+	if (touch_enable == 1){	
+	MasterTX[0]=0x00;
+	touch_adr = HAL_I2C_Master_Transmit(&hi2c1, 0x70, MasterTX, 0x01, 1);   	
+//	touch_adr = HAL_I2C_Master_Receive_DMA(&hi2c1, 0x70, touch_receive, 0x20);
+	touch_enable = 0;  
+	}
+}
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -989,7 +1141,6 @@ int main(void)
   MX_CRC_Init();
   MX_LTDC_Init();
   MX_SDMMC1_SD_Init();
-  MX_FATFS_Init();
   MX_I2C1_Init();
   MX_TIM6_Init();
   MX_RNG_Init();
@@ -1010,59 +1161,34 @@ HAL_SDRAM_MspInit(&hsdram1);
   HAL_LTDC_ProgramLineEvent(&hltdc, 0);
     /* Enable dithering */
   HAL_LTDC_EnableDither(&hltdc);
-	
-//	Touch_Ini();//narod_stream		
 
-MasterTX[0]=0x80;
-//----------------- reg N     real  datasheet
-MasterTX[0x01]=0x25;//0x80    0x25    0x46   valid touching detect threshold
-MasterTX[0x02]=0x3c;//0x81    0x3c    0x3c   valid touching peak detect threshold
-MasterTX[0x03]=0xc6;//0x82    0xc6    0x10   threshold when calculating the focus of touching
-MasterTX[0x04]=0x00;//0x83    0x00    0x3c   threshold when there is surface water
-MasterTX[0x05]=0x06;//0x84    0x06    0x0a   threshold of temperature compensation
-MasterTX[0x06]=0xa0;//0x85    0xa0    0x14   threshold whether the coordinate is different from the original
-MasterTX[0x07]=0x01;//0x86    0x01    0x01   run mode of microcontroller controlled by host Power control  
-MasterTX[0x08]=0x0a;//0x87    0x0a    0x02   time delay value when entering monitor status
-MasterTX[0x09]=0x06;//0x88    0x06    0x0c   period of active status, it should not less than 12 Period Active[3:0]
-MasterTX[0x0a]=0x28;//0x89    0x28    0x28   period of monitor status, it should not less than 30.
-//MasterTX[0x0b]=0x6f;//0x8a
-//MasterTX[0x0c]=0x4a;//0x8b
-//MasterTX[0x0d]=0xeb;//0x8c
-//MasterTX[0x0e]=0x69;//0x8d
 
-touch_adr = HAL_I2C_Master_Transmit(&hi2c1, 0x70, MasterTX, 0x0b, 1); 
-MasterTX[0]=0x80;
-touch_adr = HAL_I2C_Master_Transmit(&hi2c1, 0x70, MasterTX, 0x01, 1);   
-touch_adr = HAL_I2C_Master_Receive(&hi2c1, 0x70, test_read, 0x0a, 1);  
+  BSP_TS_Init(800, 480);
 
 //=====================================================================
+
+//while (1)
+//{
+//printf("test text\n");
+//HAL_Delay(1000);
+//}
+
 	/* Init the STemWin GUI Library */
 	GUI_Init();
 
 	/* Multi buffering enable */
   WM_MULTIBUF_Enable(1);
-
+  GUI_SetLayerVisEx (1, 0);
+  GUI_SelectLayer(0);
 	/* Activate the use of memory device feature */
   WM_SetCreateFlags(WM_CF_MEMDEV);
 	
 
 	GUI_SetBkColor(GUI_DARKBLUE);
 	GUI_Clear();
-	if(f_mount(&SDFatFs, (TCHAR const*)SD_Path, 0) != FR_OK)
-	{
-		GUI_SetColor(0x00000088);
-		GUI_FillCircle(200, 200, 200);	
-		HAL_Delay(500);
-		Error_Handler();
-	}
-	
-		GUI_SetColor(0x00008888);
-		GUI_FillCircle(200, 200, 200);		
-		HAL_Delay(500);
-	
+f_mount(&SDFatFs, (TCHAR const*)SD_Path, 0);
 
-GUI_Clear();	
-GUI_SetFont(&GUI_Font8x18);		
+GUI_SetFont(&GUI_Font24_1);		
 GUI_DispStringAt("TOUCHSCREEN TEST... TOUCH TO SCREEN",250,450);	
 //while(1){	
 //GUI_SetFont(&GUI_Font8x18);	
@@ -1091,7 +1217,45 @@ GUI_DispStringAt("TOUCHSCREEN TEST... TOUCH TO SCREEN",250,450);
 
 	/* Start Demo */
 //	GUIDEMO_Main();
+
+BUTTON_GetSkinFlexProps(&my_BUTTON_SKINFLEX_PROPS, 1);
+my_BUTTON_SKINFLEX_PROPS.Radius = 10;
+
+my_BUTTON_SKINFLEX_PROPS.aColorLower[0] = 0x361400;
+my_BUTTON_SKINFLEX_PROPS.aColorLower[1] = 0x361400;
+my_BUTTON_SKINFLEX_PROPS.aColorUpper[0] = 0x361400;
+my_BUTTON_SKINFLEX_PROPS.aColorUpper[1] = 0x361400;
+
+//my_BUTTON_SKINFLEX_PROPS.aColorFrame[0] = 0x361400;
+//my_BUTTON_SKINFLEX_PROPS.aColorFrame[1] = 0x361400;
+my_BUTTON_SKINFLEX_PROPS.aColorFrame[2] = 0x361400;
+
+//////my_BUTTON_SKINFLEX_PROPS.aColorLower[0] = GUI_TRANSPARENT;
+//////my_BUTTON_SKINFLEX_PROPS.aColorLower[1] = GUI_TRANSPARENT;
+//////my_BUTTON_SKINFLEX_PROPS.aColorUpper[0] = GUI_TRANSPARENT;
+//////my_BUTTON_SKINFLEX_PROPS.aColorUpper[1] = GUI_TRANSPARENT;
+
+BUTTON_SetSkinFlexProps(&my_BUTTON_SKINFLEX_PROPS, 0);
+BUTTON_SetSkinFlexProps(&my_BUTTON_SKINFLEX_PROPS, 1);
+BUTTON_SetSkinFlexProps(&my_BUTTON_SKINFLEX_PROPS, 2);
+BUTTON_SetSkinFlexProps(&my_BUTTON_SKINFLEX_PROPS, 3);
+
+BUTTON_SetDefaultFont(&GUI_Font24_1);
+BUTTON_SetDefaultTextAlign(GUI_TA_LEFT | GUI_TA_VERTICAL);//3
+TEXT_SetDefaultFont(&GUI_Font24_1);
+BUTTON_SetDefaultTextColor(0xFFFFFF,0);
+BUTTON_SetDefaultTextColor(0xFFFFFF,1);
+BUTTON_SetDefaultTextColor(0xFFFFFF,2);
+
   /* USER CODE END 2 */
+
+  /* Call init function for freertos objects (in freertos.c) */
+  MX_FREERTOS_Init();
+
+  /* Start scheduler */
+  osKernelStart();
+  
+  /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -1105,14 +1269,12 @@ WM_SetCreateFlags(WM_CF_MEMDEV);
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
+//    GUI_TOUCH_Exec();             /* Execute Touchscreen support */		
     GUI_Exec();                   /* Execute all GUI jobs ... Return 0 if nothing was done. */
-    GUI_X_ExecIdle();             /* Nothing left to do for the moment ... Idle processing */
+    GUI_X_ExecIdle();             /* Nothing left to do for the moment ... Idle processing */		
+
 		
-				HAL_Delay(50);	
-		
-    GUI_TOUCH_Exec();             /* Execute Touchscreen support */
-		
-		HAL_Delay(5);				
+		HAL_Delay(50);				
   }
   /* USER CODE END 3 */
 
@@ -1196,7 +1358,7 @@ void SystemClock_Config(void)
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
   /* SysTick_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
 }
 
 /* USER CODE BEGIN 4 */
